@@ -88,7 +88,9 @@ class tx_linkhandler_tcemain {
  					$recordArray = $fieldArray;
 				}
 
-				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
+				if (array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration])
+					&& ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0))
+						|| t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId'])) {
 					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) : t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
 				} else {
 					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($defaultPageID) : t3lib_div::intval_positive($defaultPageID);
@@ -118,7 +120,8 @@ class tx_linkhandler_tcemain {
 				$languageParam = '&L=' . $recordArray['sys_language_uid'];
 				$queryString  .= $languageParam . '&authCode=' . t3lib_div::stdAuthCode($linkParamValue . $WSPreviewValue . $recordArray['sys_language_uid'], '', 32);
 
-				$GLOBALS['_POST']['viewUrl'] = '/index.php?id=' . $previewPageId . $queryString . '&y=';
+				$GLOBALS['_POST']['viewUrl'] = '/index.php?id=' . $previewPageId . $queryString;
+				$GLOBALS['_POST']['popViewId_addParams'] = $queryString;
 			}
 		}
 	}

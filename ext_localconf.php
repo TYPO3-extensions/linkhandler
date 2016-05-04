@@ -56,4 +56,6 @@ $GLOBALS ['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['pro
 	// Register eID for the link generation used by the "save & show" button - hook
 $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['linkhandlerPreview'] = 'EXT:' . $_EXTKEY . '/service/class.tx_linkhandler_service_eid.php';
 
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['viewOnClickClass']['linkhandler'] = t3lib_extMgm::extPath($_EXTKEY) . 'service/hook/class.tx_linkhandler_service_befunc.php:tx_linkhandler_service_befunc';
+
 ?>
