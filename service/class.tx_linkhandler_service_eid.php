@@ -81,7 +81,7 @@ class tx_linkhandler_service_eid {
 	 *
 	 * @var integer
 	 */
-	protected $languageId = null;
+	protected $languageId = 0;
 
 	/**
 	 * Contains all required values to build an WS preview link.
@@ -178,6 +178,7 @@ class tx_linkhandler_service_eid {
 			// if we need a WS preview link we need to disable the realUrl and simulateStaticDocuments
 		if ($this->isWsPreview === true) {
 			$GLOBALS['TSFE']->config['config']['tx_realurl_enable'] = 0;
+			$GLOBALS['TSFE']->config['config']['tx_cooluri_enable'] = 0;
 			$GLOBALS['TSFE']->config['config']['simulateStaticDocuments'] = 0;
 		}
 
