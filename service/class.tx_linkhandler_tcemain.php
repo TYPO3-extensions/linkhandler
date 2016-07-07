@@ -2,7 +2,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  Copyright (c) 2009, AOE media GmbH <dev@aoemedia.de>
+ *  Copyright (c) 2009, AOE GmbH <dev@aoe.com>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,11 +27,7 @@
  *
  * class.tx_linkhandler_tcemain.php
  *
- * @author Michael Klapper <klapper@aoemedia.de>
- * @copyright Copyright (c) 2009, AOE media GmbH <dev@aoemedia.de>
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @version $Id$
- * @date $Date$
+ * @author Michael Klapper <michael.klapper@aoe.com>
  * @since 22.05.2009 - 23:03:18
  * @package TYPO3
  * @subpackage tx_linkhandler
@@ -44,17 +40,18 @@ class tx_linkhandler_tcemain {
 	 *
 	 * We use the tx_linkhandler for backend "save & show" button to display records on the configured detail view page
 	 *
-	 * @param	array		$fieldArray: The field names and their values to be processed (passed by reference)
-	 * @param	string		$table: The table TCEmain is currently processing
-	 * @param	string		$id: The records id (if any)
-	 * @param	object		$pObj: Reference to the parent object (TCEmain)
-	 * @return	void
+	 * @param  string        $status        Record status i.e. new or update
+	 * @param  string        $table         The table TCEmain is currently processing
+	 * @param  string        $id            The records id (if any)
+	 * @param  array         $fieldArray    The field names and their values to be processed (passed by reference)
+	 * @param  t3lib_TCEmain $pObj          Reference to the parent object (TCEmain)
+	 * @return void
 	 * @access public
-	 * @author Michael Klapper <michael.klapper@aoemedia.de>
+	 * @author Michael Klapper <michael.klapper@aoe.com>
 	 */
-	public function processDatamap_preProcessFieldArray($fieldArray, $table, $id, $pObj) {
+	public function processDatamap_postProcessFieldArray($status, $table, $id, $fieldArray, $pObj) {
 
-		if ( isset($GLOBALS['_POST']['_savedokview_x']) ) {
+		if (isset($GLOBALS['_POST']['_savedokview_x'])) {
 			$settingFound   = false;
 			$currentPageID  = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($GLOBALS['_POST']['popViewId']) : t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
 			$rootLineStruct = t3lib_BEfunc::BEgetRootLine($currentPageID);
@@ -100,12 +97,14 @@ class tx_linkhandler_tcemain {
 					$timeToLiveHours = ( intval($GLOBALS['BE_USER']->getTSConfigVal('options.workspaces.previewLinkTTLHours')) ) ? intval($GLOBALS['BE_USER']->getTSConfigVal('options.workspaces.previewLinkTTLHours')) : 24*2 ;
 					$WSPreviewValue = ';' . $GLOBALS['BE_USER']->workspace . ':' . $GLOBALS['BE_USER']->user['uid'] . ':' . (60 * 60 * $timeToLiveHours);
 
-						// get record UID for
-					if ( array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) {
+						// get default record UID
+					if (array_key_exists($l18nPointer, $recordArray)
+						&& (intval($recordArray[$l18nPointer]) > 0)
+						&& (intval($recordArray['sys_language_uid']) > 0)) {
 						$id = $recordArray[$l18nPointer];
-					} elseif ( array_key_exists('t3ver_oid', $recordArray) ) // this makes no sense because we already recive the UID of the WS-Placeholder which will be the real record in the LIVE-WS
-						 $id = $recordArray['t3ver_oid'];
-
+					} elseif (array_key_exists('t3ver_oid', $recordArray) && (intval($recordArray['t3ver_oid']) > 0)) { // this makes no sense because we already recive the UID of the WS-Placeholder which will be the real record in the LIVE-WS
+						$id = $recordArray['t3ver_oid'];
+					}
 				} else {
 					$WSPreviewValue = '';
 
